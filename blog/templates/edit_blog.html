@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h4>Edit blog post</h4>
+  <form method="POST">  
+    {% csrf_token %}  
+    {{ form.as_p }}  
+    <button type="submit" class="save btn btn-default">Edit</button>  
+  </form>
+{% endblock content %}
