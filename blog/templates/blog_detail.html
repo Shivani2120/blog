@@ -13,6 +13,7 @@
     <ul class="comment-list">
       {% for comment in comments %}
         <li class="comment">
+          <b>{{ comment.author }}</b>
           <p>{{ comment.text }}</p>
             <a href="{% url 'edit_comment' comment.id %}">Edit</a>
             <form action="{% url 'delete_comment' comment.id %}" method="post">
@@ -28,7 +29,7 @@
   {% endif %}
 
   <h3>Add a Comment</h3>
-  <form method="post" action="{% url 'add_comment' blog.id %}">
+  <form method="post" action="{% url 'create_comment' blog.id %}">
     {% csrf_token %}
     {{ comment_form.as_p }}
     <button type="submit">Submit</button>
