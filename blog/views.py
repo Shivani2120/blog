@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from .models import BlogPost, Comment
+from .models import BlogPost, Comment, Like
 from .forms import BlogForm
 from .forms import CommentForm
 import pdb;
@@ -10,6 +10,13 @@ def blog_detail(request, post_id):
   comments = Comment.objects.filter(post=blog)
   comment_form = CommentForm()
   return render(request, 'blog_detail.html', {'blog': blog, 'comments': comments, 'comment_form': comment_form})
+  likes_post = blog.like_set.filter(liked=True).exists()
+  dislikes_post = blog.like_set.filter(liked=False).exists()
+  context = {
+        'post': post,
+        'likes_post': likes_post,
+        'dislikes_post': dislikes_post,
+    }
 
 def index(request):
   blogs = BlogPost.objects.all()
@@ -18,7 +25,7 @@ def index(request):
 def create_blog(request):
   # pdb.set_trace()            #for debugging 
   if request.method == 'POST':
-    form = BlogForm(request.POST)
+    form = BlogForm(request.POST, request.FILES)
     if form.is_valid():
       form.save()
       return redirect('index')
@@ -71,3 +78,20 @@ def delete_comment(request, comment_id):
     post_id = comment.post.id
     comment.delete()
     return redirect('blog_detail', post_id=post_id)
+
+def like_post(request, post_id):
+  post = get_object_or_404(BlogPost, pk=post_id)
+  like, created = Like.objects.get_or_create(post=post)
+  if not created:
+      like.liked = True
+      like.save()
+  return redirect('blog_detail', post_id=post_id)
+
+def unlike_post(request, post_id):
+  post = get_object_or_404(BlogPost, pk=post_id)
+  dislike, created = Like.objects.get_or_create(post=post)
+  if not created: 
+    dislike.liked = False
+    dislike.save()
+  return redirect('blog_detail', post_id=post_id)
+

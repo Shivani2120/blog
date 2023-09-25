@@ -7,6 +7,18 @@
   {% for post in blogs %}
     <li>
       <h2>
+        {% if post.image %}
+          <img src="/media/{{ post.image }}" class="card-img-top" width="250" height="180">
+        {% else %}
+          <p>No image available</p>
+        {% endif %}
+        <p>
+          {{ post.content|truncatechars:200 }}</p>
+        <h2>
+          {% if post.pdf_file %}
+            <a href="{{ post.pdf_file.url }}" target="_blank">document</a>
+          {% endif %}
+        </h2>
         <a href="{% url 'blog_detail' post.id %}">{{ post.title }}</a>
         <a href="{% url 'edit_blog' post.id %}">Edit Post</a>
         <form action="{% url 'delete_blog' post.id %}" method="post">
@@ -15,7 +27,6 @@
           <input type="submit" value="Delete Blog" onclick="return confirm('Are you sure you want to delete this blog?')">
         </form>
       </h2>
-      <p>{{ post.content|truncatechars:200 }}</p>
     </li>
   {% empty %}
     <li>No blog posts available.</li>

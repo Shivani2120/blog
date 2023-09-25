@@ -6,7 +6,6 @@
     <p>{{ blog.content }}</p>
   </article>
 
-
   <h3>Comments</h3>
 
   {% if comments %}
@@ -35,4 +34,22 @@
     <button type="submit">Submit</button>
   </form>
 
+  {% with like_count=blog.get_like_count %}
+    <p>Likes: {{ like_count }}</p>
+  {% endwith %}
+  
+  {% with dislike_count=blog.get_dislike_count %}
+    <p>Likes: {{ dislike_count }}</p>
+  {% endwith %}
+
+  <form action="{% url 'like_post' blog.id %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Like</button>
+  </form>
+  <form action="{% url 'unlike_post' blog.id %}" method="post">
+      {% csrf_token %}
+      <button type="submit">Dislike</button>
+  </form>
+
+  <a href="{% url 'index' %}">Back</a>
 {% endblock content %}

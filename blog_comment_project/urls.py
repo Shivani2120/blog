@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from blog import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,4 +29,6 @@ urlpatterns = [
     path('<int:post_id>/comment/', views.create_comment, name='create_comment'),
     path('comment/<int:comment_id>/delete/', views.delete_comment, name='delete_comment'),
     path('comment/<int:comment_id>/edit/', views.edit_comment, name='edit_comment'),
-]
+    path('<int:post_id>/like/', views.like_post, name='like_post'),
+    path('<int:post_id>/unlike', views.unlike_post, name='unlike_post'),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

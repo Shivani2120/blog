@@ -4,9 +4,17 @@ from django.db import models
 class BlogPost(models.Model):
   title = models.CharField(max_length=50)
   content = models.CharField(max_length=100)
+  image = models.ImageField(upload_to="images/", null=True, blank=True)
+  pdf_file = models.FileField(upload_to='documents/', null=True, blank=True)
 
   def __str__(self):
     return self.title
+
+  def get_like_count(self):
+    return self.like_set.filter(liked=True).count()
+
+  def get_dislike_count(self):
+    return self.like_set.filter(liked=False).count()
 
 class Comment(models.Model):
   post = models.ForeignKey(BlogPost, on_delete=models.CASCADE)
@@ -16,3 +24,7 @@ class Comment(models.Model):
 
   def __str__(self):
     return f"Comment by {self.author} on {self.post.title}"
+
+class Like(models.Model):
+  post = models.ForeignKey(BlogPost, on_delete=models.CASCADE)
+  liked = models.BooleanField(default=True)
