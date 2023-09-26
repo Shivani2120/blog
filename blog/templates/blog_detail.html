@@ -2,54 +2,66 @@
 
 {% block content %}
   <article>
-    <h1>{{ blog.title }}</h1>
-    <p>{{ blog.content }}</p>
+    <div class="row">
+      <div class="col-8">
+        <h1>{{ blog.title }}</h1>
+        <img src="/media/{{ blog.image }}" class="card-img-top" width="350" height="400">
+      </div>
+    </div>
+    <div>
+      <p>{{ blog.content }}</p>
+    </div>
   </article>
-
-  <h3>Comments</h3>
-
-  {% if comments %}
-    <ul class="comment-list">
-      {% for comment in comments %}
-        <li class="comment">
-          <b>{{ comment.author }}</b>
-          <p>{{ comment.text }}</p>
-            <a href="{% url 'edit_comment' comment.id %}">Edit</a>
-            <form action="{% url 'delete_comment' comment.id %}" method="post">
-              {% csrf_token %}
-              <input type="hidden" name="confirmation_code" value="DELETE">
-              <input type="submit" value="Delete Blog" onclick="return confirm('Are you sure you want to delete this blog?')">
-            </form>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>No comments yet.</p>
-  {% endif %}
-
-  <h3>Add a Comment</h3>
-  <form method="post" action="{% url 'create_comment' blog.id %}">
-    {% csrf_token %}
-    {{ comment_form.as_p }}
-    <button type="submit">Submit</button>
-  </form>
-
-  {% with like_count=blog.get_like_count %}
-    <p>Likes: {{ like_count }}</p>
-  {% endwith %}
   
-  {% with dislike_count=blog.get_dislike_count %}
-    <p>Likes: {{ dislike_count }}</p>
-  {% endwith %}
-
-  <form action="{% url 'like_post' blog.id %}" method="post">
-    {% csrf_token %}
-    <button type="submit">Like</button>
-  </form>
-  <form action="{% url 'unlike_post' blog.id %}" method="post">
-      {% csrf_token %}
-      <button type="submit">Dislike</button>
-  </form>
-
-  <a href="{% url 'index' %}">Back</a>
+  <div class="row">
+    <div class="col-4" offset-2>
+      <h3>Comments</h3>
+      {% if comments %}
+        <ul class="comment-list">
+          {% for comment in comments %}
+            <li class="comment">
+              <b>{{ comment.author }}</b>
+              <p>{{ comment.text }}</p>
+                <a href="{% url 'edit_comment' comment.id %}">Edit</a>
+                <form action="{% url 'delete_comment' comment.id %}" method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="confirmation_code" value="DELETE">
+                  <input type="submit" value="Delete comment" onclick="return confirm('Are you sure you want to delete this blog?')">
+                </form>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No comments yet.</p>
+      {% endif %}
+    
+      <h3>Add a Comment</h3>
+      <form method="post" action="{% url 'create_comment' blog.id %}">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    <div class="col-6">
+      <div class="row">
+        <div class="col-3">
+          {% with like_count=blog.get_like_count %}
+            <form action="{% url 'like_post' blog.id %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="custom-button">Like: {{ like_count }}</button>
+            </form>
+          {% endwith %}
+        </div>
+        <div class="col-3">
+          {% with dislike_count=blog.get_dislike_count %}
+            <form action="{% url 'unlike_post' blog.id %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="custom-button">Likes: {{ dislike_count }}</button>
+            </form>
+          {% endwith %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href="{% url 'index' %}" class="btn btn-info">Back to the main page</a>
 {% endblock content %}
