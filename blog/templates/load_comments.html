@@ -2,4 +2,16 @@
   <div class="comment-container" data-comment-id="{{ comment.id }}">
     <p>{{ comment.text }} - {{ comment.created_at }}</p>
   </div>
+  <div class="row">
+    <div class="col-2">
+      <a href="{% url 'edit_comment' comment.id %}" class="btn btn-info">Edit</a>
+    </div>
+    <div class="col-2">
+      <form action="{% url 'delete_comment' comment.id %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="confirmation_code" value="DELETE">
+        <input type="submit" value="Delete comment" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this blog?')">
+      </form>
+    </div>
+  </div>
 {% endfor %}
