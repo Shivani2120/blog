@@ -5,8 +5,8 @@
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save Changes</button>
+    <button type="submit" class="btn btn-info">Save</button>  
+    <a href="{% url 'blog_detail' comment.post.id %}" style="background-color: #FF5733; color: white;" class="btn">Cancel</a>
   </form>
-  <a href="{% url 'blog_detail' comment.post.id %}">Cancel</a>
  
 {% endblock content %}

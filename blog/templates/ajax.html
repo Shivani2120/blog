@@ -1,0 +1,15 @@
+<script>
+	$('#usave, #lsave').click(function () {
+		var postId = $(this).data('post-id');
+			$.ajax({
+				type: 'POST',
+				url: `{% url 'like_unlike_post' blog.id %}`,
+				data: { p: postId, b: this.id},
+				success: function (data) {
+					$('#tlik').html(data.like_count);
+					$('#dlik').html(data.dislike_count);
+					$("form")[0].reset();
+				}
+			});
+	});
+</script>

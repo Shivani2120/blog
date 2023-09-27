@@ -4,6 +4,8 @@ from .models import BlogPost, Comment, Like
 from .forms import BlogForm
 from .forms import CommentForm
 import pdb;
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 def blog_detail(request, post_id):
   blog = get_object_or_404(BlogPost, pk=post_id)
@@ -79,19 +81,23 @@ def delete_comment(request, comment_id):
     comment.delete()
     return redirect('blog_detail', post_id=post_id)
 
-def like_post(request, post_id):
+@csrf_exempt
+def like_unlike_post(request, post_id):
   post = get_object_or_404(BlogPost, pk=post_id)
-  like, created = Like.objects.get_or_create(post=post)
-  if not created:
+  dislike, created1 = Like.objects.get_or_create(post=post)
+  like, created2 = Like.objects.get_or_create(post=post)
+  if request.POST.get('b') == 'lsave':
+    if not created2:
       like.liked = True
       like.save()
-  return redirect('blog_detail', post_id=post_id)
-
-def unlike_post(request, post_id):
-  post = get_object_or_404(BlogPost, pk=post_id)
-  dislike, created = Like.objects.get_or_create(post=post)
-  if not created: 
-    dislike.liked = False
-    dislike.save()
-  return redirect('blog_detail', post_id=post_id)
+      dislike.liked = True
+      dislike.save()
+  elif request.POST.get('b') == 'usave':
+    if not created1:
+      dislike.liked = False
+      dislike.save()
+      like.liked = False
+      like.save()
+  return JsonResponse({'like_count': post.get_like_count(), 'dislike_count': post.get_dislike_count() })
+  
 

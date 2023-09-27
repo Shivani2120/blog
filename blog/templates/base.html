@@ -18,8 +18,9 @@
 			{% block content %} {% endblock content %}
 		</div>
 
-		<script src="{% static 'blog/css/bootstrap.js' %}"></script>
-		<script src="{% static 'blog/css/jquery.js' %}"></script>
-		<script src="{% static 'blog/css/popper.js' %}"></script>
+		<script src="{% static 'js/jquery.js' %}"></script>
+		<script src="{% static 'js/popper.js' %}"></script>
+		<script src="{% static 'js/bootstrap.js' %}"></script>
+		{% include "ajax.html" %}
 	</body>
 </html>
