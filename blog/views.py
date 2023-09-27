@@ -12,13 +12,6 @@ def blog_detail(request, post_id):
   comments = Comment.objects.filter(post=blog)
   comment_form = CommentForm()
   return render(request, 'blog_detail.html', {'blog': blog, 'comments': comments, 'comment_form': comment_form})
-  likes_post = blog.like_set.filter(liked=True).exists()
-  dislikes_post = blog.like_set.filter(liked=False).exists()
-  context = {
-        'post': post,
-        'likes_post': likes_post,
-        'dislikes_post': dislikes_post,
-    }
 
 def index(request):
   blogs = BlogPost.objects.all()
@@ -62,6 +55,12 @@ def create_comment(request, post_id):
       comment.post = blog
       comment.save()
       return redirect('blog_detail', post_id=blog.id)
+
+def load_comments(request, post_id):
+  post = get_object_or_404(BlogPost, id=post_id)
+  comments = Comment.objects.filter(post=post.id).order_by('-created_at')[:10] 
+  comment_data = [{'id': comment.id, 'text': comment.text, 'created_at': comment.created_at, 'post': comment.post.id, 'author': comment.author} for comment in comments]
+  return render(request, 'load_comments.html', {'comments': comment_data})
 
 def edit_comment(request, comment_id):
   comment = get_object_or_404(Comment, pk=comment_id)

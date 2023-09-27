@@ -8,8 +8,24 @@
 				success: function (data) {
 					$('#tlik').html(data.like_count);
 					$('#dlik').html(data.dislike_count);
-					$("form")[0].reset();
+					// $("form")[0].reset();
 				}
 			});
+	});
+
+	$('#show-comments-btn').click(function () {
+    var postId = $(this).data('post-id');
+		var commentsContainer = $('#comments-container');
+
+		if (commentsContainer.children().length === 0) {
+		  $.ajax({
+				type: 'GET',
+				url: `{% url 'load_comments' blog.id %}`,
+				success: function (data) {
+					commentsContainer.html(data);
+				}
+			})
+		}
+		commentsContainer.toggle();
 	});
 </script>

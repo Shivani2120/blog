@@ -1,0 +1,5 @@
+{% for comment in comments %}
+  <div class="comment-container" data-comment-id="{{ comment.id }}">
+    <p>{{ comment.text }} - {{ comment.created_at }}</p>
+  </div>
+{% endfor %}
