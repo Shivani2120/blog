@@ -9,7 +9,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
+from .decorators import unauthenticated_user, allowed_users, admin_only
 
+@allowed_users(allowed_roles=['admin'])
 @login_required(login_url='login')
 def blog_detail(request, post_id):
   blog = get_object_or_404(BlogPost, pk=post_id)
@@ -18,6 +21,7 @@ def blog_detail(request, post_id):
   return render(request, 'blog_detail.html', {'blog': blog, 'comments': comments, 'comment_form': comment_form})
 
 @login_required(login_url='login')
+@admin_only
 def index(request):
   blogs = BlogPost.objects.all()
   return render(request, 'index.html', {'blogs': blogs})
@@ -112,43 +116,46 @@ def like_unlike_post(request, post_id):
       like.save()
   return JsonResponse({'like_count': post.get_like_count(), 'dislike_count': post.get_dislike_count() })
 
+@unauthenticated_user
 def registrationPage(request):
-  if request.user.is_authenticated:
-    return redirect('index')
-  else:
-    form = CreatUserForm()
-    if request.method == 'POST':
-      form = CreatUserForm(request.POST)
-      if form.is_valid():
-        form.save()
-        user = form.cleaned_data.get('username')
-        messages.success(request, "Account was created for " + user)
+  form = CreatUserForm()
+  if request.method == 'POST':
+    form = CreatUserForm(request.POST)
+    if form.is_valid():
+      user = form.save()
+      username = form.cleaned_data.get('username')
 
-        return redirect('login')
+      group = Group.objects.get(name='customer')
+      user.groups.add(group)
 
-    context = {'form': form} 
-    return render(request, 'register.html', context) 
+      messages.success(request, "Account was created for " + username)
+      return redirect('login')
 
+  context = {'form': form} 
+  return render(request, 'register.html', context) 
+
+@unauthenticated_user
 def loginPage(request):
-  if request.user.is_authenticated:
-    return redirect('index')
-  else:
-    if request.method == "POST":
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-          login(request, user)
-          messages.info(request, f"You are now logged in as {username}.")
-          return redirect("index")
-        else:
-          messages.error(request,"Invalid username or password.")
-          
-    context = {}
-    return render(request, 'login.html', context) 
+  if request.method == "POST":
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+      login(request, user)
+      messages.success(request, f"You are now logged in as {username}.")
+      return redirect("index")
+    else:
+      messages.error(request,"Invalid username or password.")
+        
+  context = {}
+  return render(request, 'login.html', context) 
 
 @login_required(login_url='login')
 def logoutUser(request):
   logout(request)
   messages.info(request, "You have successfully logged out.")
   return redirect('login')
+
+def userPage(request):
+  context = {}
+  return render(request, 'user.html', context)
