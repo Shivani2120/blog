@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from .decorators import unauthenticated_user, allowed_users, admin_only
+from django.core.mail import send_mail
 
 @allowed_users(allowed_roles=['admin'])
 @login_required(login_url='login')
@@ -24,6 +25,13 @@ def blog_detail(request, post_id):
 @admin_only
 def index(request):
   blogs = BlogPost.objects.all()
+  # send_mail(
+  #   'Testing Mail',
+  #   "Here is the message.",
+  #   "shivani.shilpi@clecotech.com",
+  #   ["shivanishilpi210@gmail.com"],
+  #   fail_silently=False,
+  # )
   return render(request, 'index.html', {'blogs': blogs})
 
 @login_required(login_url='login')

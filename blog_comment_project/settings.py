@@ -137,3 +137,22 @@ STATICFILES_DIRS = (
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587     # for live 465 port
+# EMAIL_HOST_USER =  "shivani.shilpi@clecotech.com"
+# EMAIL_HOST_PASSWORD =  "Shibu@2120"
+# EMAIL_USE_TLS = True
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587  # Use 465 for SSL
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = "shivani.shilpi@clecotech.com"
+
+# OAuth 2.0 Credentials
+EMAIL_USE_OAUTH2 = True
+EMAIL_OAUTH2_CLIENT_ID = 'your_client_id'
+EMAIL_OAUTH2_CLIENT_SECRET = 'your_client_secret'
+EMAIL_OAUTH2_TOKEN_URI = 'https://oauth2.googleapis.com/token'
